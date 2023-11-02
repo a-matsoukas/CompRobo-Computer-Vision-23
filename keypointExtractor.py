@@ -13,9 +13,12 @@ class keypointExtractor:
     Attributes:
         mpHolistic: a mediapipe model that returns pose, face, and hand markers from a video feed in real time
         mpDrawing: a mediapipe helper class that visualizes results of a vision task
+        DATAPATH: a string with the relative filepath to the top level data folder
+        nSequences: an int representing the number of video samples to take of each action
+        sequenceLength: an int representing the number of frames to take for each video sample
     """
 
-    def __init__(self):
+    def __init__(self, actions=np.array(["hello", "thank you", "I love you"]), nSequences=30, sequenceLength=30):
         """
         Initialize properties of instance of keypointExtractor.
 
@@ -27,9 +30,16 @@ class keypointExtractor:
         self.mpHolistic = mp.solutions.holistic
         self.mpDrawing = mp.solutions.drawing_utils
 
+        self.DATAPATH = "./MPData"
+        self.actions = actions
+        self.nSequences = nSequences
+        self.sequenceLength = sequenceLength
+
+        self.makeDataDirectories()
+
     def videoCapture(self):
         """
-        Open a CV2 video feed and extract keypoint data from hands and face.
+        Open a CV2 video feed, extract keypoint data from hands and face and save to file.
 
         Args:
             N/A
@@ -41,23 +51,41 @@ class keypointExtractor:
 
         # set mediapipe model
         with self.mpHolistic.Holistic(min_detection_confidence=.5, min_tracking_confidence=.5) as holistic:
-            while cap.isOpened():
+            for action in self.actions:
+                for sequence in range(self.nSequences):
+                    for frameNum in range(self.sequenceLength):
 
-                # read from feed
-                ret, frame = cap.read()
+                        # read from feed
+                        ret, frame = cap.read()
 
-                # make detections from current frame
-                image, results = self.mediapipeDetection(frame, holistic)
+                        # make detections from current frame
+                        image, results = self.mediapipeDetection(
+                            frame, holistic)
 
-                # draw landmarks on frame
-                self.drawLandmarks(image, results)
+                        # draw landmarks on frame
+                        self.drawLandmarks(image, results)
 
-                # show to screen
-                cv2.imshow("OpenCV Feed", image)
+                        # wait logic
+                        if frameNum == 0:
+                            cv2.putText(image, "STARTING COLLECTION", (120, 200),
+                                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv2.LINE_AA)
+                            cv2.imshow("OpenCV Feed", image)
+                            cv2.waitKey(2000)
+                        cv2.putText(image, f"Collecting frames for {action}. Video number {sequence}.", (
+                            15, 12), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 0, 255), 1, cv2.LINE_AA)
+                        cv2.imshow("OpenCV Feed", image)
 
-                # break condition
-                if cv2.waitKey(10) & 0xFF == ord('q'):
-                    break
+                        # save frame keypoints
+                        keypoints = self.extractKeypoints(results)
+                        savePath = os.path.join(
+                            self.DATAPATH, action, str(sequence), str(frameNum))
+                        np.save(savePath, keypoints)
+
+                        # break condition
+                        if cv2.waitKey(10) & 0xFF == ord('q'):
+                            cap.release()
+                            cv2.destroyAllWindows()
+                            return
             cap.release()
             cv2.destroyAllWindows()
 
@@ -118,6 +146,24 @@ class keypointExtractor:
         ) if results.right_hand_landmarks else np.zeros(21 * 3)
 
         return np.concatenate([pose, face, lh, rh])
+
+    def makeDataDirectories(self):
+        """
+        If not present, make directories to hold trianing data based on classes, num samples, and num frames.
+        To be called when initializing keypointExtractor class.
+
+        Args:
+            N/A
+        Returns:
+            N/A
+        """
+        for action in self.actions:
+            for sequence in range(self.nSequences):
+                try:
+                    os.makedirs(os.path.join(
+                        self.DATAPATH, action, str(sequence)))
+                except:
+                    pass
 
 
 extractor = keypointExtractor()
