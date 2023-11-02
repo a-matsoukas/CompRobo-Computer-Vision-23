@@ -1,9 +1,5 @@
-import cv2
 import numpy as np
 import os
-import matplotlib.pyplot as plt
-import time
-import mediapipe as mp
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
@@ -131,7 +127,3 @@ class trainedModel:
         print(
             f"Confusion Matrix:\n {multilabel_confusion_matrix(yTrue, yHat)}")
         print(f"Accuracy Score:\n {accuracy_score(yTrue, yHat)}")
-
-
-model = trainedModel()
-model.evaluateModel()
