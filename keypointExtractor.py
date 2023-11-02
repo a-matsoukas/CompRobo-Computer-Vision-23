@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 import os
-import matplotlib.pyplot as plt
-import time
 import mediapipe as mp
 
 
@@ -18,11 +16,12 @@ class keypointExtractor:
         sequenceLength: an int representing the number of frames to take for each video sample
     """
 
-    def __init__(self, actions=np.array(["hello", "thank you", "I love you"]), nSequences=30, sequenceLength=30):
+    def __init__(self, DATAPATH="./MPDATA", actions=np.array(["hello", "thank you", "I love you"]), nSequences=30, sequenceLength=30):
         """
         Initialize properties of instance of keypointExtractor.
 
         Args:
+            DATAPATH: a string with the filepath to the top level folder that will hold data
             actions: a numpy array of strings which are labels for each class of data
                 defaults to ["hello", "thank you", "I love you"]
             nSequences: an int representing the number of data samples per class
@@ -35,7 +34,7 @@ class keypointExtractor:
         self.mpHolistic = mp.solutions.holistic
         self.mpDrawing = mp.solutions.drawing_utils
 
-        self.DATAPATH = "./MPData"
+        self.DATAPATH = DATAPATH
         self.actions = actions
         self.nSequences = nSequences
         self.sequenceLength = sequenceLength
@@ -169,7 +168,3 @@ class keypointExtractor:
                         self.DATAPATH, action, str(sequence)))
                 except:
                     pass
-
-
-extractor = keypointExtractor()
-extractor.videoCapture()
