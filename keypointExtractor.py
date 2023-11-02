@@ -23,7 +23,12 @@ class keypointExtractor:
         Initialize properties of instance of keypointExtractor.
 
         Args:
-            N/A
+            actions: a numpy array of strings which are labels for each class of data
+                defaults to ["hello", "thank you", "I love you"]
+            nSequences: an int representing the number of data samples per class
+                defaults to 30
+            sequenceLength: an int representing the number of frames per data sample
+                defaults to 30
         Returns:
             N/A
         """
