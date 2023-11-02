@@ -12,6 +12,7 @@ class keypointExtractor:
         mpHolistic: a mediapipe model that returns pose, face, and hand markers from a video feed in real time
         mpDrawing: a mediapipe helper class that visualizes results of a vision task
         DATAPATH: a string with the relative filepath to the top level data folder
+        actions: a numpy array of text labels for each class of data
         nSequences: an int representing the number of video samples to take of each action
         sequenceLength: an int representing the number of frames to take for each video sample
     """
