@@ -42,7 +42,64 @@ class keypointExtractor:
 
         self.makeDataDirectories()
 
-    def videoCapture(self):
+    def realTimeAnalysis(self, model):
+        """
+        Use a trained action detection model to predict sign language in real time.
+
+        Args:
+            model: the model attribute of a trainedModel class
+        Returns:
+            N/A
+        """
+        sequence = []
+        sentence = []
+        threshhold = .4
+
+        cap = cv2.VideoCapture(0)
+
+        # set mediapipe model
+        with self.mpHolistic.Holistic(min_detection_confidence=.5, min_tracking_confidence=.5) as holistic:
+            while cap.isOpened():
+
+                # read from feed
+                ret, frame = cap.read()
+
+                # make detections from current frame
+                image, results = self.mediapipeDetection(frame, holistic)
+
+                # draw landmarks on frame
+                self.drawLandmarks(image, results)
+
+                # make predictions
+                keypoints = self.extractKeypoints(results)
+                sequence.append(keypoints)
+                sequence = sequence[-30:]
+
+                if len(sequence) == 30:
+                    res = model.predict(np.expand_dims(sequence, axis=0))[0]
+
+                    # write text to screen
+                    if (res[np.argmax(res)] > threshhold) and ((len(sentence) > 0 and self.actions[np.argmax(res)] != sentence[-1]) or (len(sentence) == 0)):
+                        sentence.append(self.actions[np.argmax(res)])
+
+                    if len(sentence) > 5:
+                        sentence = sentence[-5:]
+
+                    cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
+                    cv2.putText(image, " ".join(
+                        sentence), (3, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+                # show to screen
+                cv2.imshow("OpenCV Feed", image)
+
+                # break condition
+                if cv2.waitKey(10) & 0xFF == ord('q'):
+                    break
+
+            cap.release()
+            cv2.destroyAllWindows()
+
+    def dataCapture(self):
         """
         Open a CV2 video feed, extract keypoint data from hands and face and save to file.
 
@@ -51,7 +108,6 @@ class keypointExtractor:
         Returns:
             N/A
         """
-
         cap = cv2.VideoCapture(0)
 
         # set mediapipe model
