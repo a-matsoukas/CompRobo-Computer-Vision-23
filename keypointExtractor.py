@@ -16,7 +16,7 @@ class keypointExtractor:
         sequenceLength: an int representing the number of frames to take for each video sample
     """
 
-    def __init__(self, DATAPATH="./MPDATA", actions=np.array(["hello", "thank you", "I love you"]), nSequences=30, sequenceLength=30):
+    def __init__(self, DATAPATH="./MPData", actions=np.array(["hello", "thank you", "I love you"]), nSequences=30, sequenceLength=30):
         """
         Initialize properties of instance of keypointExtractor.
 
