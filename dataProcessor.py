@@ -10,6 +10,7 @@ class dataProcessor:
         DATAPATH: a string that is the filepath to the folder that will hold training data
         dataJSON: a string that is the filepath to the json file holding info about each video
         videoIDInfoJSON: a dict that pairs each video id to dict of attributes
+        actions: a list of all the actions represented by the video samples
 
     Methods:
         makeIDClassDict
@@ -31,6 +32,7 @@ class dataProcessor:
             self.dataJSON = json.load(jsonFile)
 
         self.videoIDInfoJSON = {}
+        self.actions = []
 
         self.makeIDClassDict()
         self.makeDataDirectories()
@@ -61,7 +63,7 @@ class dataProcessor:
 
     def makeDataDirectories(self):
         """
-        If not present, make directories to hold training data based on available video data.
+        If not present, make directories to hold training data based on available video data, and create class list.
         To be called when initializing dataProcessor class.
 
         Args:
@@ -70,11 +72,11 @@ class dataProcessor:
             N/A
         """
         for videoID in self.videoIDInfoJSON:
+            if self.videoIDInfoJSON[videoID]["gloss"] not in self.actions:
+                self.actions.append(self.videoIDInfoJSON[videoID]["gloss"])
             try:
                 os.makedirs(os.path.join(self.DATAPATH, self.videoIDInfoJSON[videoID]["gloss"], str(
                     self.videoIDInfoJSON[videoID]["instance_id"])))
             except:
                 pass
-
-
-processor = dataProcessor()
+        self.actions.sort()
