@@ -17,6 +17,7 @@ Professor: Paul Ruvolo
 - MediaPipe
 - scikit-learn
 - Matplotlib
+- [Files in this Folder](https://drive.google.com/drive/folders/1j_HCrhukWvCwATvi8vavOUxSfb0K09kA?usp=sharing)
 
 **How did you solve the problem (i.e., what methods / algorithms did you use and how do they work)? As above, since not everyone will be familiar with the algorithms you have chosen, you will need to spend some time explaining what you did and how everything works.**
 
@@ -39,3 +40,5 @@ Professor: Paul Ruvolo
 ## Resources Used
 
 - [Sign Language Detection using ACTION RECOGNITION with Python | LSTM Deep Learning Model](https://www.youtube.com/watch?v=doDUihpj6ro)
+- [WLASL (World Level American Sign Language) Video](https://www.kaggle.com/datasets/risangbaskoro/wlasl-processed?select=WLASL_v0.3.json)
+  - 12k processed videos of Word-Level American Sign Language glossary performance
