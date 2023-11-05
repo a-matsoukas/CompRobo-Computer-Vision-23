@@ -8,6 +8,7 @@ class dataProcessor:
 
     Attributes:
         DATAPATH: a string that is the filepath to the folder that will hold training data
+        VIDEOPATH: a string indicating where video data is stored
         dataJSON: a string that is the filepath to the json file holding info about each video
         videoIDInfoJSON: a dict that pairs each video id to dict of attributes
         actions: a list of all the actions represented by the video samples
@@ -17,17 +18,19 @@ class dataProcessor:
         makeDataDirectories
     """
 
-    def __init__(self, DATAPATH="./WLASLData", jsonFilepath="./WLASL_v0.3.json"):
+    def __init__(self, DATAPATH="./WLASLData", VIDEOPATH="./videos", jsonFilepath="./WLASL_v0.3.json"):
         """
         Initialize properties of instance of dataProcessor.
 
         Args:
             DATAPATH: a string indicating where data will be saved to generate folders
+            VIDEOPATH: a string indicating where video data is stored
             jsonFilepath: a string indicating where info about each video is
         Returns:
             N/A
         """
         self.DATAPATH = DATAPATH
+        self.VIDEOPATH = VIDEOPATH
         with open(jsonFilepath) as jsonFile:
             self.dataJSON = json.load(jsonFile)
 
@@ -71,7 +74,8 @@ class dataProcessor:
         Returns:
             N/A
         """
-        for videoID in self.videoIDInfoJSON:
+        for videoFile in os.listdir(self.VIDEOPATH):
+            videoID = videoFile[:-4]
             if self.videoIDInfoJSON[videoID]["gloss"] not in self.actions:
                 self.actions.append(self.videoIDInfoJSON[videoID]["gloss"])
             try:
