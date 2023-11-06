@@ -14,7 +14,7 @@ class keypointExtractor:
         DATAPATH: a string with the relative filepath to the top level data folder
         VIDEOPATH: a string with the filepath to the folder holding training videos
         videoProperties: a dict holding info for each video
-        actions: a list of text labels for each class of data
+        actions: a numpy array of text labels for each class of data
         sequenceLength: an int representing the number of frames to take for each video sample
     """
 
