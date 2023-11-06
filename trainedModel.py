@@ -108,7 +108,7 @@ class trainedModel:
 
         # split into train and test subsets
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            X, y, test_size=.4)
+            X, y, test_size=.25)
 
     def trainModel(self):
         """
