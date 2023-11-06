@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau
 from sklearn.metrics import multilabel_confusion_matrix, accuracy_score
 
 
@@ -108,7 +108,7 @@ class trainedModel:
 
         # split into train and test subsets
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            X, y, test_size=.25)
+            X, y, test_size=.15)
 
     def trainModel(self):
         """
@@ -121,6 +121,10 @@ class trainedModel:
         """
         logDir = os.path.join("./Logs")
         tbCallback = TensorBoard(log_dir=logDir)
+        esCallback = EarlyStopping(
+            monitor="loss", min_delta=0.0001, patience=20, verbose=0, mode="auto", baseline=None, restore_best_weights=True, start_from_epoch=50)
+        lrCallback = ReduceLROnPlateau(monitor="loss", factor=.5, patience=5,
+                                       verbose=0, mode="auto", min_delta=0.0005, cooldown=0, min_lr=0,)
 
         model = Sequential()
         model.add(LSTM(64, return_sequences=True,
@@ -136,8 +140,8 @@ class trainedModel:
         if os.path.exists("./trainedModel.keras"):
             model.load_weights("./trainedModel.keras")
         else:
-            model.fit(self.X_train, self.y_train,
-                      epochs=750, callbacks=[tbCallback])
+            model.fit(self.X_train, self.y_train, epochs=750,
+                      callbacks=[tbCallback, esCallback, lrCallback])
             model.save("./trainedModel.keras")
 
         self.model = model
