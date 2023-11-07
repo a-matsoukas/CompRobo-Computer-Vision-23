@@ -6,7 +6,15 @@ Professor: Paul Ruvolo
 
 ## Project Goal
 
-**What was the goal of your project? Since everyone is doing a different project, you will have to spend some time setting this context.**
+The goal of this project was to explore computer vision within the context of sign language translation. I wanted to focus on real-time sign language translation, as opposed to doing image recognition on static photos; this is effectively action recognition, where all of the actions are words in sign language.
+
+Part of the framing of this project was to learn at a high level and implement a new machine learning algorithm. I took ML a couple years ago, where I worked with multilayer perceptrons (MLPs), generative adversarial networks (GANs), and convolutional neural networks (CNNs). For this project, I implemented a long short-term memory (LSTM) algorithm, which differs from all of the above models in the sense that it is a type of recurrent neural network (RNN), and thus has “memory” and can make decisions based on sequential data, which is good for analyzing a real-time feed of data.
+
+Additionally, I planned to do some reading about where this kind of tool is already being used, its benefits, and its negatives. I see this as a tool with a lot of potential to assist communication between those who use sign language and those who do not. I aimed to look into the social implications of this technology and what should be done to make sure that it is implemented equitably.
+
+As a stretch goal, I planned to learn at a low level how LSTMs work, such that I can write out and/or describe the math and implement the model from scratch.
+
+As a minimum viable product (MVP) for this project, I planned to follow along and implement the sign language recognition algorithm outlined in [this YouTube tutorial](https://www.youtube.com/watch?v=doDUihpj6ro). I was successful in implementing the MVP early on in the project, but I got hung on on implementation details and model-training quirks when making improvements to the algorithm; as a result, I was not quite able to explore social context or learn how the model works at a low level, as outlined by my strech goals.
 
 ## Implementation Details
 
