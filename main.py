@@ -19,7 +19,10 @@ def main():
 
     processor = dataProcessor(DATAPATH=DATAPATH, jsonFilepath=jsonFilepath)
     videoProperties = processor.videoIDInfoJSON
-    actions = processor.actions
+
+    # use either all of the actions present in the data or hardcode your own subset
+    # actions = processor.actions
+    actions = ["i", "you", "we", "hello", "goodbye", "go", "home"]
 
     # initialize class to extract datapoints from each video and save to each file
     VIDEOPATH = "./videos"  # folder where videos are stored
@@ -35,9 +38,10 @@ def main():
     modelInstance = trainedModel(
         DATAPATH=DATAPATH, actions=actions, sequenceLength=sequenceLength)
     modelInstance.evaluateModel()
+    modelInstance.plotModel()
 
     # use the extractor to make real time predictions
-    # extractor.realTimeAnalysis(modelInstance.model)
+    extractor.realTimeAnalysis(modelInstance.model)
 
 
 if __name__ == "__main__":
