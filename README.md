@@ -128,7 +128,7 @@ The best solution that I ended up with was to limit the amount of training data 
         width:60%;"
 >
     <img 
-        src="./gifs/"
+        src="./gifs/realTimeExample.gif"
         alt="Real-Time Detection Gif"
     >
 </figure>
