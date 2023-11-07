@@ -16,6 +16,13 @@ class keypointExtractor:
         videoProperties: a dict holding info for each video
         actions: a numpy array of text labels for each class of data
         sequenceLength: an int representing the number of frames to take for each video sample
+
+    Methods:
+        realTimeAnalysis
+        dataCapture
+        mediapipeDetection
+        drawLandmarks
+        extractKeypoints
     """
 
     def __init__(self, DATAPATH="./WLASLData", VIDEOPATH="./videos", videoProperties={}, actions=[], sequenceLength=30):

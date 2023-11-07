@@ -1,7 +1,7 @@
 import numpy as np
 import os
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.utils import to_categorical, plot_model
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from tensorflow.keras.callbacks import TensorBoard, EarlyStopping, ReduceLROnPlateau
@@ -108,7 +108,7 @@ class trainedModel:
 
         # split into train and test subsets
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            X, y, test_size=.15)
+            X, y, test_size=.05, random_state=1)
 
     def trainModel(self):
         """
@@ -161,3 +161,15 @@ class trainedModel:
         print(
             f"Confusion Matrix:\n {multilabel_confusion_matrix(yTrue, yHat)}")
         print(f"Accuracy Score:\n {accuracy_score(yTrue, yHat)}")
+
+    def plotModel(self):
+        """
+        Create a visual of the model architecture and save to diagrams folder.
+
+        Args:
+            N/A
+        Returns:
+            N/A
+        """
+        plot_model(self.model, to_file="./diagrams/modelPlot.png",
+                   show_shapes=True, show_layer_names=True)
