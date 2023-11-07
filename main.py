@@ -22,7 +22,7 @@ def main():
 
     # use either all of the actions present in the data or hardcode your own subset
     # actions = processor.actions
-    actions = ["i", "you", "we", "hello", "goodbye", "go", "home"]
+    actions = ["a", "b", "d", "e", "f", "g", "h", "i", "j", "k"]
 
     # initialize class to extract datapoints from each video and save to each file
     VIDEOPATH = "./videos"  # folder where videos are stored
