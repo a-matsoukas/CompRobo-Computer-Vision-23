@@ -135,7 +135,11 @@ The best solution that I ended up with was to limit the amount of training data 
 
 ## Design Decisions
 
-**Describe a design decision you had to make when working on your project and what you ultimately did (and why)? These design decisions could be particular choices for how you implemented some part of an algorithm or perhaps a decision regarding which of two external packages to use in your project.**
+Because I was basing my initial code off of a tutorial, the overarching flow of the code and the packages used were already predetermined; however, even with this, I was able to exercise a lot of freedom in how the code was written and how I adapted the code after hitting the MVP.
+
+For example, a big design decision was the choice to use class-based architecture. As mentioned above, the tutorial was done in a Jupyter Notebook, meaning that everything was run in the same place as if it was a single script with some functions. After getting the main ideas from the tutorial, I decided to completely refactor the implementation and use classes for distinct parts of the implementation. This greatly improves readability and helps keep variables in the proper scope. Methods relating to model training don't need access to variables used only for extracting data from the videos. Furthermore, this allows the main file to be very short and readable, with the option to dive deeper into the code if more information is needed. Because I thoroughly documented my classes and methods with docstrings, hovering over class names in the main file gives some insight into how they work without needing to open the action code.
+
+Furthermore, after completing the tutorial and seeing the model work well on the three manually-created classes, I moved on to reformatting the code to take in data from videos; this allows for a larger dataset to be collected with minimal work. Upon training on the entire dataset, I saw that the model would train well for about 60 epochs, and then the accuraccy would plummet and plateau at a lower point. In order to remedy this, I modified the given model to track its loss at each step of the training process using callback functions. This way, the model can adjust its learning rate or quit learning automatically. What this means is that a model will end early but still save its weights, which is an improvement from quitting the process halfway, losing the progess, and wasting time.
 
 ## Challenges
 
