@@ -139,11 +139,21 @@ The best solution that I ended up with was to limit the amount of training data 
 
 ## Challenges
 
-**What if any challenges did you face along the way?**
+- Using OpenCV effectively.
+  - At first, I was following along with tutorial code, so I did not need to think too deeply about how the data was being captured from an OpenCV feed; however, when I got to building on the MVP, I struggled a lot to modify the existing code to take in an alternate type of data. This was mostly a challenge in reading and understanding documentation. Furthermore, I was running into strange OpenCV issues where the last few frames of the video would not load, derailing data extraction; this meant that I had to make my code more robust and incorporate good error handling, as having the script break in the middle of collecting data would be a huge waste of time.
+- Understanding the pitfalls of training complex machine learning models.
+  - As mentioned above, I added ways to deal with plateaus in training, and this was done as a result on doing research on the issues that I was running into. I spend time learning about terminology related to training machine learning models, and I ran into optimization strategies that were too complex for me to try and implement in the scope of this project. Part of this challenge was understanding the issue I am running into well enough to research it, and the other part was understanding which techniques were appropriate to try and use.
+- Finding a useful training dataset.
+  - For my first pass at this project, I created my dataset from scratch, with only three classes; however, for each class I had 30 video samples, and the model performed quite well. I think that a large part of why I had trouble getting the model to work well with the new dataset is that there are simply not enough examples of each action. It seems like there's a tradeoff between number of classes and number of training samples per class, but I think that to be an effective translator, the model needs to know at minimum enough words to be fluent in the language it is translating to. That is why I prioritized a larger dataset up front.
 
 ## Future Improvements
 
-**What would you do to improve your project if you had more time?**
+- Learn lower-level details about how LSTMs work and how to optimize them.
+  - I think that the training of the machine learning model suffered because I did not know enough about which parameters to tune to maximize its performance. If I had more time, I would take steps to be able to use my large data set to its maximum potential.
+- Research current uses of this technology.
+  - As one of the learning goals that I didn't get to, I think it would be a good use of time to see how this type of technology is currently being implemented and use that to inform my own design. Furthermore, it would be helpful to look at this technology from a social standpoint and investigate the pros and cons of this type of action detection.
+- Improve the UI of how the model makes predictions and allow predictions to be made on videos.
+  - Currently, the trained model is run on a live feed that OpenCV initializes using the computer's camera. The way the prediction is delivered is by printing the current action to the top of the screen. I think it would be nice if the video feed displayed a running caption and saved a transcript at the end. I would also like to be able to optionally pass in a video to do detection on instead of a live feed.
 
 ## Lessons Learned
 
