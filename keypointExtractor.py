@@ -96,8 +96,8 @@ class keypointExtractor:
                         sentence = sentence[-5:]
 
                     cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
-                    cv2.putText(image, " ".join(
-                        sentence), (3, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                    cv2.putText(
+                        image, sentence[-1], (3, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
                 # show to screen
                 cv2.imshow("OpenCV Feed", image)
