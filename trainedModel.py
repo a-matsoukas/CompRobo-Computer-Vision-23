@@ -22,6 +22,12 @@ class trainedModel:
         y_train: labels corresponding to the training data
         y_test: labals corresponding to the testing data
         model: the trained LSTM model that is used to make predictions
+
+    Methods:
+        generateTrainTestData
+        trainModel
+        evaluateModel
+        plotModel
     """
 
     def __init__(self, DATAPATH="./WLASLData", actions=[], sequenceLength=30):
