@@ -6,27 +6,38 @@ import mediapipe as mp
 
 class keypointExtractor:
     """
-    A class for extracting keypoint information from a video or camera feed to use as training data.
+    A class for extracting keypoint information from videos to use as training data.
 
     Attributes:
         mpHolistic: a mediapipe model that returns pose, face, and hand markers from a video feed in real time
         mpDrawing: a mediapipe helper class that visualizes results of a vision task
         DATAPATH: a string with the relative filepath to the top level data folder
+        VIDEOPATH: a string with the filepath to the folder holding training videos
+        videoProperties: a dict holding info for each video
         actions: a numpy array of text labels for each class of data
-        nSequences: an int representing the number of video samples to take of each action
         sequenceLength: an int representing the number of frames to take for each video sample
+
+    Methods:
+        realTimeAnalysis
+        dataCapture
+        mediapipeDetection
+        drawLandmarks
+        extractKeypoints
     """
 
-    def __init__(self, DATAPATH="./MPData", actions=np.array(["hello", "thank you", "I love you"]), nSequences=30, sequenceLength=30):
+    def __init__(self, DATAPATH="./WLASLData", VIDEOPATH="./videos", videoProperties={}, actions=[], sequenceLength=30):
         """
         Initialize properties of instance of keypointExtractor.
 
         Args:
             DATAPATH: a string with the filepath to the top level folder that will hold data
-            actions: a numpy array of strings which are labels for each class of data
-                defaults to ["hello", "thank you", "I love you"]
-            nSequences: an int representing the number of data samples per class
-                defaults to 30
+                defaults to "./WLASLData"
+            VIDEOPATH: a string the the filepath to the folder holding all of the training videos
+                defaults to "./videos"
+            videoProperties: a dict holding info for each video
+                defaults to {}
+            actions: a list of strings which are labels for each class of data
+                defaults to []
             sequenceLength: an int representing the number of frames per data sample
                 defaults to 30
         Returns:
@@ -36,11 +47,10 @@ class keypointExtractor:
         self.mpDrawing = mp.solutions.drawing_utils
 
         self.DATAPATH = DATAPATH
-        self.actions = actions
-        self.nSequences = nSequences
+        self.VIDEOPATH = VIDEOPATH
+        self.videoProperties = videoProperties
+        self.actions = np.array(actions)
         self.sequenceLength = sequenceLength
-
-        self.makeDataDirectories()
 
     def realTimeAnalysis(self, model):
         """
@@ -86,8 +96,8 @@ class keypointExtractor:
                         sentence = sentence[-5:]
 
                     cv2.rectangle(image, (0, 0), (640, 40), (245, 117, 16), -1)
-                    cv2.putText(image, " ".join(
-                        sentence), (3, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                    cv2.putText(
+                        image, sentence[-1], (3, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
                 # show to screen
                 cv2.imshow("OpenCV Feed", image)
@@ -101,54 +111,81 @@ class keypointExtractor:
 
     def dataCapture(self):
         """
-        Open a CV2 video feed, extract keypoint data from hands and face and save to file.
+        Loop through videos in video folder, extract keypoint data from hands and face and save to file.
 
         Args:
             N/A
         Returns:
             N/A
         """
-        cap = cv2.VideoCapture(0)
-
         # set mediapipe model
         with self.mpHolistic.Holistic(min_detection_confidence=.5, min_tracking_confidence=.5) as holistic:
-            for action in self.actions:
-                for sequence in range(self.nSequences):
-                    for frameNum in range(self.sequenceLength):
+            # loop through videos
+            for videoFile in sorted(os.listdir(self.VIDEOPATH)):
+                # extract id, action, instance id, and start/end frames
+                videoID = videoFile[:-4]
+                action = self.videoProperties[videoID]["gloss"]
+                instanceID = self.videoProperties[videoID]["instance_id"]
+                # starting at 1
+                frameStart = self.videoProperties[videoID]["frame_start"]
+                frameEnd = self.videoProperties[videoID]["frame_end"]
+
+                cap = cv2.VideoCapture(os.path.join(self.VIDEOPATH, videoFile))
+
+                frameCount = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+                if frameEnd == -1:
+                    frameEnd = frameCount
+
+                # check if there are enough frames to collect data
+                # incorporate a 5-frame buffer at the end due to issues with end of video not loading
+                if (frameEnd - 5) - frameStart + 1 >= self.sequenceLength:
+                    print(
+                        f"Class: {action}, Instance: {instanceID}, Frames: {frameStart}:{frameEnd}, NumFrames:{(frameEnd - 5) - frameStart + 1}")
+                    # get evenly spaced frames over the video
+                    framesToAnalyze = np.linspace(
+                        frameStart, frameEnd - 5, self.sequenceLength)
+
+                    for frameNum in framesToAnalyze:
+
+                        # set video to each frame
+                        cap.set(cv2.CAP_PROP_POS_FRAMES, int(frameNum) - 1)
 
                         # read from feed
                         ret, frame = cap.read()
 
-                        # make detections from current frame
-                        image, results = self.mediapipeDetection(
-                            frame, holistic)
+                        if ret:
+                            # make detections from current frame
+                            image, results = self.mediapipeDetection(
+                                frame, holistic)
 
-                        # draw landmarks on frame
-                        self.drawLandmarks(image, results)
+                            # draw landmarks and show to screen
+                            self.drawLandmarks(image, results)
+                            cv2.imshow("Video", image)
 
-                        # wait logic
-                        if frameNum == 0:
-                            cv2.putText(image, "STARTING COLLECTION", (120, 200),
-                                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 1, cv2.LINE_AA)
-                            cv2.imshow("OpenCV Feed", image)
-                            cv2.waitKey(2000)
-                        cv2.putText(image, f"Collecting frames for {action}. Video number {sequence}.", (
-                            15, 12), cv2.FONT_HERSHEY_SIMPLEX, .5, (0, 0, 255), 1, cv2.LINE_AA)
-                        cv2.imshow("OpenCV Feed", image)
+                            # save frame keypoints
+                            keypoints = self.extractKeypoints(results)
+                            savePath = os.path.join(
+                                self.DATAPATH, action, str(instanceID), str(int(frameNum)))
+                            np.save(savePath, keypoints)
 
-                        # save frame keypoints
-                        keypoints = self.extractKeypoints(results)
-                        savePath = os.path.join(
-                            self.DATAPATH, action, str(sequence), str(frameNum))
-                        np.save(savePath, keypoints)
+                        else:
+                            print(f"\tMissed frame {int(frameNum)}")
 
                         # break condition
                         if cv2.waitKey(10) & 0xFF == ord('q'):
                             cap.release()
                             cv2.destroyAllWindows()
                             return
-            cap.release()
-            cv2.destroyAllWindows()
+
+                    cap.release()
+                # if not enough frames, skip video
+                else:
+                    print(
+                        f"SKIPPING - Class: {action}, Instance: {instanceID}, Frames: {frameStart}:{frameEnd}, NumFrames:{(frameEnd - 5) - frameStart + 1}")
+                    cap.release
+
+        cv2.destroyAllWindows()
 
     def mediapipeDetection(self, image, model):
         """
@@ -207,21 +244,3 @@ class keypointExtractor:
         ) if results.right_hand_landmarks else np.zeros(21 * 3)
 
         return np.concatenate([pose, face, lh, rh])
-
-    def makeDataDirectories(self):
-        """
-        If not present, make directories to hold trianing data based on classes, num samples, and num frames.
-        To be called when initializing keypointExtractor class.
-
-        Args:
-            N/A
-        Returns:
-            N/A
-        """
-        for action in self.actions:
-            for sequence in range(self.nSequences):
-                try:
-                    os.makedirs(os.path.join(
-                        self.DATAPATH, action, str(sequence)))
-                except:
-                    pass
