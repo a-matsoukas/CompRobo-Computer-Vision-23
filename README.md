@@ -91,7 +91,7 @@ I used the same architecture that was provided in the tutorial video; however, I
 
 Early on, I tried training the model on all of the data that I have available, which is 2000 classes (actions), with an average of 5 video samples per class. The training was incredibly slow, and the final accuracy of the model was only about 1%. I think there are a couple reasons for this. The first is simply that I do not have enough training data; however, data processing and training is already incredibly time and space intensive, so I did not want to look for more data. The second is that the architecture of the model is not optimized for this type of classification; I did not change the overall architecture, but as mentioned above, I did change how the model trains.
 
-The best solution that I ended up with was to limit the amount of training data to a subset of all the available classes; I ended up choosing the alphabet, as there are only 26 classes, and the motions are easy to learn. Training went much better, with accuracy on the training data reaching close to 100%, as shown in the accuracy and loss plots below; however, the model likely overfit to the training data, as real-time prediction performs very badly.
+The best solution that I ended up with was to limit the amount of training data to a subset of all the available classes; I ended up choosing the alphabet, as there are only 26 classes, and the motions are easy to learn. Training went much better, with accuracy on the training data reaching close to 100%, as shown in the accuracy and loss plots below; however, the model likely overfit to the training data, as real-time prediction performs very badly, as if it was guessing each time.
 
 <figure
     style=
