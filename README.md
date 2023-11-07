@@ -157,7 +157,10 @@ The best solution that I ended up with was to limit the amount of training data 
 
 ## Lessons Learned
 
-**Did you learn any interesting lessons for future robotic programming projects? These could relate to working on robotics projects in teams, working on more open-ended (and longer term) problems, or any other relevant topic.**
+- Time management and project scoping.
+  - I think I did a much better job on project scoping. A large part of that was having a clearly defined and manageable MVP. However, I did not get to some of the stretch goals that I intended to, and I think this is due to poor time management towards the beginning of the process. I did not realize how time intensive it would be to learn how to use OpenCV in conjunction with a new machine learning model.
+- Data collection and heuristics for action detection.
+  - Going into the project, I had the idea that the machine learning model would run on the pixels of each frame of the video feed and make predictions based off of the pixel values. I think it was really interesting to go up a level of abstraction and run a model over the video feed to first extract the important features as keypoints, which serve as proxies for the action and will be used to train the model. I think that there's a potential speed tradeoff, as each frame requires running two models: the keypoint extractor and the action predictor.
 
 ## Resources Used
 
