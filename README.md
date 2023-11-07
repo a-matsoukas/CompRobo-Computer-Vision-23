@@ -120,6 +120,8 @@ The best solution that I ended up with was to limit the amount of training data 
 
 ### Real-Time Prediction
 
+Shown below is a gif of me iterating through the letters a to j. The prediction is shown at the top of the frame in blue.
+
 <figure
     style=
         "display: block;
